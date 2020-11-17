@@ -15,28 +15,50 @@ namespace SqlServer.Commands.Handlers
             _options = options;
         }
 
-        public void Execute(ISqlCommandDefinition command)
+        public int ExecuteNonQuery(ISqlCommandDefinition command)
         {
             using (SqlCommand sqlCommand = command.GetCommand())
             {
                 sqlCommand.Connection = Connection;
-                sqlCommand.ExecuteNonQuery();
+                return sqlCommand.ExecuteNonQuery();
             }
 
         }
 
-        public async Task ExecuteAsync(ISqlCommandDefinition command)
+        public async Task<int> ExecuteNonQueryAsync(ISqlCommandDefinition command)
         {
             using (SqlCommand sqlCommand = command.GetCommand())
             {
                 sqlCommand.Connection = Connection;
-                await sqlCommand.ExecuteNonQueryAsync();
+                OpenConnection();
+                return await sqlCommand.ExecuteNonQueryAsync();
+            }
+        }
+
+        public object ExecuteScalar(ISqlCommandDefinition command)
+        {
+            using (SqlCommand sqlCommand = command.GetCommand())
+            {
+                sqlCommand.Connection = Connection;
+                return sqlCommand.ExecuteScalar();
+            }
+        }
+
+        public async Task<object> ExecuteScalarAsync(ISqlCommandDefinition command)
+        {
+            using (SqlCommand sqlCommand = command.GetCommand())
+            {
+                sqlCommand.Connection = Connection;
+                return await sqlCommand.ExecuteScalarAsync();
             }
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            if(_connection != null)
+            {
+                _connection.Dispose();
+            }
         }
 
         private SqlConnection Connection
@@ -47,8 +69,19 @@ namespace SqlServer.Commands.Handlers
                 {
                     _connection = new SqlConnection(_options.ConnectionString);
                 }
-
+                OpenConnection();
                 return _connection;
+            }
+        }
+
+        private void OpenConnection()
+        {
+            if(_connection != null)
+            {
+                if(_connection.State != System.Data.ConnectionState.Open)
+                {
+                    _connection.Open();
+                }
             }
         }
     }
