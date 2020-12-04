@@ -21,7 +21,7 @@ namespace SqlServer.Commands.Extensions
                                             .FirstOrDefault() as SqlParameterAttribute
                 });
 
-            List<SqlParameter> resultParameters = new List<SqlParameter>();
+            //List<SqlParameter> resultParameters = new List<SqlParameter>();
 
             foreach (var attr in propertiesAndAttibutes)
             {
@@ -45,12 +45,12 @@ namespace SqlServer.Commands.Extensions
 
                 SqlParameter sqlParameter = null;
 
-                //new SqlParameter(attr.attribure.Name, propertyValue)
+                yield return sqlParameter;
 
-                resultParameters.Add(sqlParameter);
+                //resultParameters.Add(sqlParameter);
             }
 
-            return resultParameters;
+            //return resultParameters;
 
         }
 
@@ -64,21 +64,21 @@ namespace SqlServer.Commands.Extensions
             {
                 SqlCommand command = new SqlCommand();
                 command.CommandType = attribute.Type;
-                command.CommandText = attribute.Command;
+                command.CommandText = attribute.CommandText;
 
                 command.Parameters.AddRange(definition.GetParameters().ToArray());
 
                 return command;
             }
 
-            throw new ArgumentNullException("StoredProcedureAttribute. Name of procedure cannot be null.");
+            throw new ArgumentNullException("ISqlCommandDefinitionExtensions. Name of stored procedure cannot be null.");
 
         }
 
         private static void ThrowException(string parameterName)
         {
 
-            string error = $"SqlCommandAttribute. Required cannot be null or empty. Parameter Name = {parameterName}";
+            string error = $"ISqlCommandDefinitionExtensions. Required cannot be null or empty. Parameter Name = {parameterName}";
 
             throw new ArgumentNullException(error);
         }

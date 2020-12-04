@@ -6,17 +6,18 @@ namespace SqlServer.Commands.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class SqlCommandAttribute : Attribute
     {
-        public string Command { get; set; }
+        public string CommandText { get; set; }
+
         public CommandType Type { get; set; } = CommandType.Text;
 
         public SqlCommandAttribute(string command)
         {
-            Command = command;
+            CommandText = command;
         }
 
-        public SqlCommandAttribute(string command,CommandType commandType)
+        public SqlCommandAttribute(string command, CommandType commandType)
         {
-            Command = command;
+            CommandText = command;
             Type = commandType;
         }
     }
